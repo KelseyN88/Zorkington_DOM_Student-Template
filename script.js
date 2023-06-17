@@ -14,14 +14,16 @@
 */
 
 export const gameDetails = {   
-    title: 'Game Title',
-    desc: 'Welcome to the world of... here are some quick rules & concepts...',
-    author: 'Student Name',
-    cohort: 'SBPT-2022',
-    startingRoomDescription: 'What you see before you is...',
+    title: 'Abandoned Barn',
+    desc: 'Welcome to the world of... here are some quick rules & concepts... To Move: enter move and room name Commands: i or inventory to view inventory. Item Commands: enter inspect, pickup, look, followed by item name',
+    author: 'Kelsey',
+    cohort: 'SBPT-May-2023',
+    startingRoomDescription: `Its dark and raining. Youre driving down the road when suddenly you smell something burning,
+    you pull off onto a dirt road and notice smoke start to barrel out of the hood of your car. You need to get away from there!
+    You notice an abandoned barn up ahead...maybe you can take cover there?`,
     playerCommands: [
         // replace these with your games commands as needed
-        'inspect', 'view', 'look', 'pickup',
+        'inspect', 'inventory', 'look', 'pickup', 'move'
     ]
     // Commands are basic things that a player can do throughout the game besides possibly moving to another room. This line will populate on the footer of your game for players to reference. 
     // This shouldn't be more than 6-8 different commands.
@@ -29,7 +31,7 @@ export const gameDetails = {
 
 // Your code here
 
-export const domDisplay = (playerInput) => {
+export const domDisplay = (playerInput) => { // this must "return" a string not all code needs to be in this function
     /* 
         TODO: for students
         - This function must return a string. 
@@ -60,6 +62,6 @@ export const domDisplay = (playerInput) => {
                 - break down each problem into small chunks
                     - What is the process of picking up an item exactly? ex: Look. Pick from a list of items. Put into players list of items... 
     */
-
+console.log(playerInput);
     // Your code here
 } 
