@@ -15,23 +15,124 @@
 
 export const gameDetails = {   
     title: 'Abandoned Barn',
-    desc: 'Welcome to the world of... here are some quick rules & concepts... To Move: enter move and room name Commands: i or inventory to view inventory. Item Commands: enter inspect, pickup, look, followed by item name',
+    desc: 'Welcome to the world of mystery... here are some quick rules & concepts... To Move: enter move and room name Commands: i or inventory to view inventory. Item Commands: enter inspect, pickup, look, followed by item name',
     author: 'Kelsey',
     cohort: 'SBPT-May-2023',
     startingRoomDescription: `Its dark and raining. Youre driving down the road when suddenly you smell something burning,
-    you pull off onto a dirt road and notice smoke start to barrel out of the hood of your car. You need to get away from there!
+    you pull off onto a dirt road when you see smoke start to barrel out of the hood of your car. You need to get away from there!
     You notice an abandoned barn up ahead...maybe you can take cover there?`,
     playerCommands: [
         // replace these with your games commands as needed
-        'inspect', 'inventory', 'look', 'pickup', 'move'
+        'inspect', 'inventory', 'look', 'pickup','drop', 'move', 'view'
     ]
     // Commands are basic things that a player can do throughout the game besides possibly moving to another room. This line will populate on the footer of your game for players to reference. 
     // This shouldn't be more than 6-8 different commands.
 }
 
+//==========================================================================================================================================================================
+
+// State Machine
+const pathways = {
+    car: ["barn"],
+    barn: ["cellar", "loft"],
+    loft: ["barn"],
+    cellar: ["barn"]
+}
+
+// Command Lookup Table
+let commandLookup = {
+    inventory: ["i", "inventory"],
+    use: ["use"],
+    pickup: ["pickup", "grab"],
+    drop: ["drop", "delete", "remove"],
+    move: ["move", "go to"],
+    view: ["view"]
+}
+
+
+
+
+// Item Class
+class Item {
+    constructor(name, description, location, takeable) {
+        this.name = name,
+        this.description = description,
+        this.location = location
+        this.takeable = takeable
+    }
+
+    pickupItem() {
+        return `You picked up ${item}`
+        //should add to personal inventory
+    }
+
+    dropItem() {
+        //should remove from personal inventory and add to room inventory
+    }
+
+    viewInventory() {
+        //should pull up a list of items in personal inventory
+    }
+
+}
+
+// Room Class
+class Room {
+    constructor(name, description, items) {
+        this.name = name,
+        this.description = description,
+        this.items = items
+    }
+
+}
+
+
+// Items
+let flashlight =  new Item("flashlight", "Its out of batteries...", "car", false)
+let knife = new Item("knife", "a small pocket knife with a sharp edge...", "car", true)
+let rope =  new Item("rope", "This rope appears to be too frayed to be useful...", "barn", false)
+let crowbar = new Item("crowbar", "A sturdy crowbar could be used to pry...", "barn", true)
+let mousetrap = new Item("mousetrap", "this trap hasnt been set off yet, better not touch it...", "cellar", false)
+let polaroid =  new Item("polaroid", "A polaroid picture of an older couple holding hands in their garden.. on the back is a handwritten date '1997'...", "cellar", true)
+let hay =  new Item("hay", "hay is for horses...", "loft", false)
+let matches = new Item("matches", "A pack of matches, theres still some left!", "loft", true)
+
+// Rooms
+const car = new Room("car", "You are in the car, you can get out and go to the old barn", [flashlight, knife])
+const barn = new Room("barn", "Youre on the main floor of the old barn, the moonlight shines through the rickety panels to illuminate the room just enough to see stairs to a loft or a dark opening that leads to the cellar.", [crowbar, rope])
+const cellar = new Room("cellar", "You slowly creep down to the cellar... its pretty scary down here!", [mousetrap, polaroid])
+const loft = new Room("loft", "You climb the creeky ladder to the loft, its dusty up here!", [hay, matches])
+
+
+// Room Lookup Table
+let roomLookup = {
+    car: car,
+    barn: barn,
+    cellar: cellar,
+    loft: loft
+}
+
+// Item lookup Table
+let itemLookup = {
+    flashlight: flashlight, // cant use
+    crowbar: crowbar,
+    hay: hay, // cant use
+    rope: rope, // cant use
+    knife: knife,
+    mousetrap: mousetrap, //cant use
+    polaroid: polaroid,
+    matches: matches
+}
+
+
+
+
+
 // Your code here
 
 export const domDisplay = (playerInput) => { // this must "return" a string not all code needs to be in this function
+
+   
     /* 
         TODO: for students
         - This function must return a string. 
@@ -62,6 +163,13 @@ export const domDisplay = (playerInput) => { // this must "return" a string not 
                 - break down each problem into small chunks
                     - What is the process of picking up an item exactly? ex: Look. Pick from a list of items. Put into players list of items... 
     */
-console.log(playerInput);
+
     // Your code here
-} 
+
+
+
+
+
+
+
+} // end domDisplay function
