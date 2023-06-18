@@ -31,6 +31,9 @@ export const gameDetails = {
 
 //==========================================================================================================================================================================
 
+
+let playerInventory = []
+
 // State Machine
 const pathways = {
     car: ["barn"],
@@ -51,7 +54,7 @@ let commandLookup = {
 
 
 
-
+//=====================================================================
 // Item Class
 class Item {
     constructor(name, description, location, takeable) {
@@ -59,11 +62,6 @@ class Item {
         this.description = description,
         this.location = location
         this.takeable = takeable
-    }
-
-    pickupItem() {
-        return `You picked up ${item}`
-        //should add to personal inventory
     }
 
     dropItem() {
@@ -74,14 +72,31 @@ class Item {
         //should pull up a list of items in personal inventory
     }
 
+    takeable() {
+        if (this.takeable) {
+            // index of array slice & .push to player inventory
+            return ` You picked up ${this.name}.`
+        } else {
+            return `${this.description}`
+        }
+    }
+
 }
+
+
+//=============================================================================
 
 // Room Class
 class Room {
-    constructor(name, description, items) {
+    constructor(name, description, items, inventory) {
         this.name = name,
         this.description = description,
-        this.items = items
+        this.items = items,
+        this.inventory = []
+    }
+
+    addItem(item) { // adding items to room inventory
+
     }
 
 }
@@ -91,7 +106,7 @@ class Room {
 let flashlight =  new Item("flashlight", "Its out of batteries...", "car", false)
 let knife = new Item("knife", "a small pocket knife with a sharp edge...", "car", true)
 let rope =  new Item("rope", "This rope appears to be too frayed to be useful...", "barn", false)
-let crowbar = new Item("crowbar", "A sturdy crowbar could be used to pry...", "barn", true)
+let crowbar = new Item("crowbar", "A sturdy crowbar could be used to pry something...", "barn", true)
 let mousetrap = new Item("mousetrap", "this trap hasnt been set off yet, better not touch it...", "cellar", false)
 let polaroid =  new Item("polaroid", "A polaroid picture of an older couple holding hands in their garden.. on the back is a handwritten date '1997'...", "cellar", true)
 let hay =  new Item("hay", "hay is for horses...", "loft", false)
@@ -102,7 +117,6 @@ const car = new Room("car", "You are in the car, you can get out and go to the o
 const barn = new Room("barn", "Youre on the main floor of the old barn, the moonlight shines through the rickety panels to illuminate the room just enough to see stairs to a loft or a dark opening that leads to the cellar.", [crowbar, rope])
 const cellar = new Room("cellar", "You slowly creep down to the cellar... its pretty scary down here!", [mousetrap, polaroid])
 const loft = new Room("loft", "You climb the creeky ladder to the loft, its dusty up here!", [hay, matches])
-
 
 // Room Lookup Table
 let roomLookup = {
@@ -124,15 +138,11 @@ let itemLookup = {
     matches: matches
 }
 
-
-
-
-
 // Your code here
 
-export const domDisplay = (playerInput) => { // this must "return" a string not all code needs to be in this function
+//create takeable item thing
 
-   
+export const domDisplay = (playerInput) => { // this must "return" a string not all code needs to be in this function
     /* 
         TODO: for students
         - This function must return a string. 
@@ -165,8 +175,23 @@ export const domDisplay = (playerInput) => { // this must "return" a string not 
     */
 
     // Your code here
+   
 
+    while (true) {
+        let currentRoom = car
 
+    let inputArray = playerInput.split(" ")
+    let command = inputArray[0]
+    let thing = inputArray[1]
+
+    if (commandLookup.pickup.includes(command)) {
+    //  return Item.takeable()
+
+    } else {
+        return `Whoops, I dont know how to do that...`
+    }
+
+    }
 
 
 
