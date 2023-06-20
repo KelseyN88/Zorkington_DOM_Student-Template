@@ -34,6 +34,7 @@ export const gameDetails = {
 
 let playerInventory = []
 
+
 // State Machine
 const pathways = {
     car: ["barn"],
@@ -73,15 +74,22 @@ class Item {
     }
 
     takeable() {
-        if (this.takeable) {
-            // index of array slice & .push to player inventory
-            return ` You picked up ${this.name}.`
-        } else {
-            return `${this.description}`
-        }
+        // if (this.takeable) {
+        //     // index of array slice & .push to player inventory
+        //     let itemName = playerInput
+        //     let index = itemLookup.indexOf(Item)
+        //     let slicedItem = itemLookup[index]
+        //     playerInventory.push[slicedItem]
+        //     return ` You picked up ${item}.`
+        //     console.log(playerInventory);
+        // } else {
+        //     return `${this.description}... gotta leave it`
+        // }
     }
 
 }
+
+
 
 
 //=============================================================================
@@ -95,7 +103,7 @@ class Room {
         this.inventory = []
     }
 
-    addItem(item) { // adding items to room inventory
+    addItem(item) { // adding items to room inventory (dropping items)
 
     }
 
@@ -139,8 +147,24 @@ let itemLookup = {
 }
 
 // Your code here
+let currentRoom = car
+//create takeable item
+function pickupItem(item) {
+    if (item && item.takeable) {
+      let itemIndex = currentRoom.items.findIndex(roomItem => roomItem.name === item.name);
+      let removedItem = currentRoom.items.splice(itemIndex, 1)[0];
+      playerInventory.push(removedItem);
+      return `You picked up the ${removedItem}.`;
+    } else {
+      return `You can't take the item.`;
+    }
+  }
+  
 
-//create takeable item thing
+
+
+
+    
 
 export const domDisplay = (playerInput) => { // this must "return" a string not all code needs to be in this function
     /* 
@@ -176,25 +200,26 @@ export const domDisplay = (playerInput) => { // this must "return" a string not 
 
     // Your code here
    
-
+    
     while (true) {
-        let currentRoom = car
-
-    let inputArray = playerInput.split(" ")
-    let command = inputArray[0]
-    let thing = inputArray[1]
-
-    if (commandLookup.pickup.includes(command)) {
-    //  return Item.takeable()
-
-    } else {
-        return `Whoops, I dont know how to do that...`
-    }
-
-    }
-
-
-
+        let inputArray = playerInput.split(" ");
+        let command = inputArray[0];
+        let thing = inputArray[1];
+    
+        if (commandLookup.pickup.includes(command)) {
+          let item = itemLookup[thing];
+          if (item) {
+            pickupItem(item);
+          } else {
+            console.log(`Item '${thing}' not found.`);
+          }
+        }
+       
+      }
+    }  // end domDisplay function
 
 
-} // end domDisplay function
+
+
+
+
