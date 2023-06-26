@@ -13,170 +13,202 @@
             - use your browsers console throughout testing.
 */
 
-export const gameDetails = {   
-    title: 'Abandoned Barn',
-    desc: 'Welcome to the world of mystery... here are some quick rules & concepts... To Move: enter move and room name Commands: i or inventory to view inventory. Item Commands: enter inspect, pickup, look, followed by item name',
-    author: 'Kelsey',
-    cohort: 'SBPT-May-2023',
-    startingRoomDescription: `Its dark and raining. Youre driving down the road when suddenly you smell something burning,
+export const gameDetails = {
+  title: "Abandoned Barn",
+  desc: "Welcome to the world of mystery... here are some quick rules & concepts... To Move: enter move and room name Commands: i or inventory to view inventory. Item Commands: enter inspect, pickup, look, followed by item name",
+  author: "Kelsey",
+  cohort: "SBPT-May-2023",
+  startingRoomDescription: `Its dark and raining. Youre driving down the road when suddenly you smell something burning,
     you pull off onto a dirt road when you see smoke start to barrel out of the hood of your car. You need to get away from there!
     You notice an abandoned barn up ahead...maybe you can take cover there?`,
-    playerCommands: [
-        // replace these with your games commands as needed
-        'inspect', 'inventory', 'look', 'pickup','drop', 'move', 'view'
-    ]
-    // Commands are basic things that a player can do throughout the game besides possibly moving to another room. This line will populate on the footer of your game for players to reference. 
-    // This shouldn't be more than 6-8 different commands.
-}
+  playerCommands: [
+    // replace these with your games commands as needed
+    "inspect",
+    "inventory",
+    "look",
+    "pickup",
+    "drop",
+    "move",
+    "view",
+  ],
+  // Commands are basic things that a player can do throughout the game besides possibly moving to another room. This line will populate on the footer of your game for players to reference.
+  // This shouldn't be more than 6-8 different commands.
+};
 
 //==========================================================================================================================================================================
 
-
-let playerInventory = []
-
+let playerInventory = [];
 
 // State Machine
 const pathways = {
-    car: ["barn"],
-    barn: ["cellar", "loft"],
-    loft: ["barn"],
-    cellar: ["barn"]
-}
+  car: ["barn"],
+  barn: ["cellar", "loft"],
+  loft: ["barn"],
+  cellar: ["barn"],
+};
 
 // Command Lookup Table
 let commandLookup = {
-    inventory: ["i", "inventory"],
-    use: ["use"],
-    pickup: ["pickup", "grab"],
-    drop: ["drop", "delete", "remove"],
-    move: ["move", "go to"],
-    view: ["view"]
-}
-
-
+  inventory: ["i", "inventory"],
+  use: ["use"],
+  pickup: ["pickup", "grab"],
+  drop: ["drop", "delete", "remove"],
+  move: ["move", "go to"],
+  view: ["view"],
+};
 
 //=====================================================================
 // Item Class
 class Item {
-    constructor(name, description, location, takeable) {
-        this.name = name,
-        this.description = description,
-        this.location = location
-        this.takeable = takeable
-    }
+  constructor(name, description, location, takeable) {
+    (this.name = name),
+      (this.description = description),
+      (this.location = location);
+    this.takeable = takeable;
+  }
 
-    dropItem() {
-        //should remove from personal inventory and add to room inventory
-    }
+  dropItem() {
+    //should remove from personal inventory and add to room inventory
+  }
 
-    viewInventory() {
-        //should pull up a list of items in personal inventory
-    }
-
-    // takeable() {
-    //     if (this.takeable) {
-    //         // index of array slice & .push to player inventory
-    //         let itemName = playerInput
-    //         let index = itemLookup.indexOf(itemName)
-    //         let slicedItem = itemLookup[index]
-    //         playerInventory.push[slicedItem]
-    //         return ` You picked up ${item}.`
-    //     } else {
-    //         return `${this.description}... gotta leave it`
-    //     }
-    // }
-
-
-
-}
-
-
-
+  viewInventory() {
+    //should pull up a list of items in personal inventory
+  }
+} // end of Item class
 
 //=============================================================================
 
 // Room Class
 class Room {
-    constructor(name, description, items, inventory) {
-        this.name = name,
-        this.description = description,
-        this.items = []
-        // this.inventory = []
+  constructor(name, description, items, inventory) {
+    (this.name = name), (this.description = description), (this.items = []);
+    // this.inventory = []
+  }
+
+  addItem(item) {
+    // adding items to room inventory (dropping items from player inventory)
+
+    this.items.push(item);
+    return `You dropped the ${item.name}`;
+  }
+
+  take(itemName) {
+    const item = itemLookup[itemName];
+    if (item && item.takeable) {
+      // room specific info here??
+      playerInventory.push(item);
+      return `You picked up ${item.name}: ${item.description}`;
+    } else {
+      return `${item.description}`;
     }
+  }
 
-    addItem(item) { // adding items to room inventory (dropping items from player inventory)
-
-        this.items.push(item)
-        return `You dropped the ${item.name}`
-    } 
-
-    take(itemName) {
-        const item = itemLookup[itemName];
-        if (item && item.takeable) {
-          playerInventory.push(item);
-          return `You picked up ${item.name}: ${item.description}`;
-        } else {
-          return `${item.description}`;
-        }
-      }
-      
-
-    
-    
-    } // end of Room class
-
-
-
+  transition(newRoom) {
+    const validTransitions = pathways[this.name];
+    if (validTransitions.includes(newRoom)) {
+      return newRoom;
+    } else {
+      return null;
+    }
+  }
+} // end of Room class
 
 // Items
-let flashlight =  new Item("flashlight", "Its out of batteries, wont do me any good...", "car", false)
-let knife = new Item("knife", "A small pocket knife with a sharp edge...", "car", true)
-let rope =  new Item("rope", "This rope appears to be too frayed to be useful...", "barn", false)
-let crowbar = new Item("crowbar", "A sturdy crowbar could be used to pry something...", "barn", true)
-let mousetrap = new Item("mousetrap", "This trap hasnt been set off yet, better not touch it...", "cellar", false)
-let polaroid =  new Item("polaroid", "A polaroid picture of an older couple holding hands in their garden.. on the back is a handwritten date '1997'...", "cellar", true)
-let hay =  new Item("hay", "Hay is for horses, what would I do with that...", "loft", false)
-let matches = new Item("matches", "A pack of matches, theres still some left!", "loft", true)
+let flashlight = new Item(
+  "flashlight",
+  "Its out of batteries, wont do me any good...",
+  "car"
+);
+let knife = new Item(
+  "knife",
+  "A small pocket knife with a sharp edge...",
+  "car",
+  true
+);
+let rope = new Item(
+  "rope",
+  "This rope appears to be too frayed to be useful...",
+  "barn"
+);
+let crowbar = new Item(
+  "crowbar",
+  "A sturdy crowbar could be used to pry something...",
+  "barn",
+  true
+);
+let mousetrap = new Item(
+  "mousetrap",
+  "This trap hasnt been set off yet, better not touch it...",
+  "cellar"
+);
+let polaroid = new Item(
+  "polaroid",
+  "A polaroid picture of an older couple holding hands in their garden.. on the back is a handwritten date '1997'...",
+  "cellar",
+  true
+);
+let hay = new Item(
+  "hay",
+  "Hay is for horses, what would I do with that...",
+  "loft"
+);
+let matches = new Item(
+  "matches",
+  "A pack of matches, theres still some left!",
+  "loft",
+  true
+);
 
 // Rooms
-const car = new Room("car", "You are in the car, you can get out and go to the old barn", [flashlight, knife])
-const barn = new Room("barn", "Youre on the main floor of the old barn, the moonlight shines through the rickety panels to illuminate the room just enough to see stairs to a loft or a dark opening that leads to the cellar.", [crowbar, rope])
-const cellar = new Room("cellar", "You slowly creep down to the cellar... its pretty scary down here!", [mousetrap, polaroid])
-const loft = new Room("loft", "You climb the creeky ladder to the loft, its dusty up here!", [hay, matches])
+const car = new Room(
+  "car",
+  "You are in the car, you can get out and go to the old barn",
+  [flashlight, knife]
+);
+const barn = new Room(
+  "barn",
+  "Youre on the main floor of the old barn, the moonlight shines through the rickety panels to illuminate the room just enough to see stairs to a loft or a dark opening that leads to the cellar.",
+  [crowbar, rope]
+);
+const cellar = new Room(
+  "cellar",
+  "You slowly creep down to the cellar... its pretty scary down here!",
+  [mousetrap, polaroid]
+);
+const loft = new Room(
+  "loft",
+  "You climb the creeky ladder to the loft, its dusty up here!",
+  [hay, matches]
+);
 
 // Room Lookup Table
 let roomLookup = {
-    car: car,
-    barn: barn,
-    cellar: cellar,
-    loft: loft
-}
+  car: car,
+  barn: barn,
+  cellar: cellar,
+  loft: loft,
+};
 
 // Item lookup Table
 let itemLookup = {
-    flashlight: flashlight, // cant use
-    crowbar: crowbar,
-    hay: hay, // cant use
-    rope: rope, // cant use
-    knife: knife,
-    mousetrap: mousetrap, //cant use
-    polaroid: polaroid,
-    matches: matches
-}
+  flashlight: flashlight, // cant use
+  crowbar: crowbar,
+  hay: hay, // cant use
+  rope: rope, // cant use
+  knife: knife,
+  mousetrap: mousetrap, //cant use
+  polaroid: polaroid,
+  matches: matches,
+};
 
 // Your code here
-let currentRoom = car
+let currentRoom = car;
 console.log(currentRoom);
 
-
-
-
-
-    
-
-export const domDisplay = (playerInput) => { // this must "return" a string not all code needs to be in this function
-        console.log(playerInput);
-    /* 
+export const domDisplay = (playerInput) => {
+  // this must "return" a string not all code needs to be in this function
+  console.log(playerInput);
+  /* 
         TODO: for students
         - This function must return a string. 
         - This will be the information that is displayed within the browsers game interface above the users input field.
@@ -207,12 +239,14 @@ export const domDisplay = (playerInput) => { // this must "return" a string not 
                     - What is the process of picking up an item exactly? ex: Look. Pick from a list of items. Put into players list of items... 
     */
 
-    // Your code here
+  // Your code here
 
-    let inputArray = playerInput.split(" ");
+  // Player input
+  let inputArray = playerInput.split(" ");
   let command = inputArray[0];
   let item = inputArray.slice(1).join(" ");
 
+  // FOR PICKING UP AN ITEM
   if (commandLookup.pickup.includes(command)) {
     let response = currentRoom.take(item);
     console.log(playerInventory);
@@ -220,22 +254,15 @@ export const domDisplay = (playerInput) => { // this must "return" a string not 
   }
   console.log(playerInventory);
 
-  // Other code for handling different commands
-
-  return ""; // Default return value if the command is not recognized
-
-    // let myItem = currentRoom.take(item)
-    // console.log(playerInventory);
-    // return myItem
-
-   
-
-
-
-}  // end of domDisplay function
-
-
-
-
-
-
+  //MOVING ROOMS STATE FUNCTION
+  if (commandLookup.move.includes(command)) {
+    const newRoom = item; // reminder for myself: in this case item is the second part of the players input array
+    const nextRoom = currentRoom.transition(newRoom);
+    if (nextRoom) {
+      currentRoom = roomLookup[nextRoom];
+      return `You are in the ${nextRoom}: ${currentRoom.description}`;
+    } else {
+      return `I can't go that way, I'll try somewhere else...`;
+    }
+  }
+}; // end of domDisplay function
