@@ -73,19 +73,20 @@ class Item {
         //should pull up a list of items in personal inventory
     }
 
-    takeable() {
-        // if (this.takeable) {
-        //     // index of array slice & .push to player inventory
-        //     let itemName = playerInput
-        //     let index = itemLookup.indexOf(Item)
-        //     let slicedItem = itemLookup[index]
-        //     playerInventory.push[slicedItem]
-        //     return ` You picked up ${item}.`
-        //     console.log(playerInventory);
-        // } else {
-        //     return `${this.description}... gotta leave it`
-        // }
-    }
+    // takeable() {
+    //     if (this.takeable) {
+    //         // index of array slice & .push to player inventory
+    //         let itemName = playerInput
+    //         let index = itemLookup.indexOf(itemName)
+    //         let slicedItem = itemLookup[index]
+    //         playerInventory.push[slicedItem]
+    //         return ` You picked up ${item}.`
+    //     } else {
+    //         return `${this.description}... gotta leave it`
+    //     }
+    // }
+
+
 
 }
 
@@ -99,25 +100,42 @@ class Room {
     constructor(name, description, items, inventory) {
         this.name = name,
         this.description = description,
-        this.items = items,
-        this.inventory = []
+        this.items = []
+        // this.inventory = []
     }
 
-    addItem(item) { // adding items to room inventory (dropping items)
+    addItem(item) { // adding items to room inventory (dropping items from player inventory)
 
-    }
+        this.items.push(item)
+        return `You dropped the ${item.name}`
+    } 
 
-}
+    take(itemName) {
+        const item = itemLookup[itemName];
+        if (item && item.takeable) {
+          playerInventory.push(item);
+          return `You picked up ${item.name}: ${item.description}`;
+        } else {
+          return `${item.description}`;
+        }
+      }
+      
+
+    
+    
+    } // end of Room class
+
+
 
 
 // Items
-let flashlight =  new Item("flashlight", "Its out of batteries...", "car", false)
-let knife = new Item("knife", "a small pocket knife with a sharp edge...", "car", true)
+let flashlight =  new Item("flashlight", "Its out of batteries, wont do me any good...", "car", false)
+let knife = new Item("knife", "A small pocket knife with a sharp edge...", "car", true)
 let rope =  new Item("rope", "This rope appears to be too frayed to be useful...", "barn", false)
 let crowbar = new Item("crowbar", "A sturdy crowbar could be used to pry something...", "barn", true)
-let mousetrap = new Item("mousetrap", "this trap hasnt been set off yet, better not touch it...", "cellar", false)
+let mousetrap = new Item("mousetrap", "This trap hasnt been set off yet, better not touch it...", "cellar", false)
 let polaroid =  new Item("polaroid", "A polaroid picture of an older couple holding hands in their garden.. on the back is a handwritten date '1997'...", "cellar", true)
-let hay =  new Item("hay", "hay is for horses...", "loft", false)
+let hay =  new Item("hay", "Hay is for horses, what would I do with that...", "loft", false)
 let matches = new Item("matches", "A pack of matches, theres still some left!", "loft", true)
 
 // Rooms
@@ -148,18 +166,8 @@ let itemLookup = {
 
 // Your code here
 let currentRoom = car
-//create takeable item
-function pickupItem(item) {
-    if (item && item.takeable) {
-      let itemIndex = currentRoom.items.findIndex(roomItem => roomItem.name === item.name);
-      let removedItem = currentRoom.items.splice(itemIndex, 1)[0];
-      playerInventory.push(removedItem);
-      return `You picked up the ${removedItem}.`;
-    } else {
-      return `You can't take the item.`;
-    }
-  }
-  
+console.log(currentRoom);
+
 
 
 
@@ -167,6 +175,7 @@ function pickupItem(item) {
     
 
 export const domDisplay = (playerInput) => { // this must "return" a string not all code needs to be in this function
+        console.log(playerInput);
     /* 
         TODO: for students
         - This function must return a string. 
@@ -199,24 +208,31 @@ export const domDisplay = (playerInput) => { // this must "return" a string not 
     */
 
     // Your code here
+
+    let inputArray = playerInput.split(" ");
+  let command = inputArray[0];
+  let item = inputArray.slice(1).join(" ");
+
+  if (commandLookup.pickup.includes(command)) {
+    let response = currentRoom.take(item);
+    console.log(playerInventory);
+    return response;
+  }
+  console.log(playerInventory);
+
+  // Other code for handling different commands
+
+  return ""; // Default return value if the command is not recognized
+
+    // let myItem = currentRoom.take(item)
+    // console.log(playerInventory);
+    // return myItem
+
    
-    
-    while (true) {
-        let inputArray = playerInput.split(" ");
-        let command = inputArray[0];
-        let thing = inputArray[1];
-    
-        if (commandLookup.pickup.includes(command)) {
-          let item = itemLookup[thing];
-          if (item) {
-            pickupItem(item);
-          } else {
-            console.log(`Item '${thing}' not found.`);
-          }
-        }
-       
-      }
-    }  // end domDisplay function
+
+
+
+}  // end of domDisplay function
 
 
 
