@@ -67,39 +67,40 @@ class Item {
     this.takeable = takeable;
   }
 
-  dropItem() {
-    //should remove from personal inventory and add to room inventory
-  }
-
-  viewInventory() {
-    //should pull up a list of items in personal inventory
-  }
 } // end of Item class
 
-//=============================================================================
 
 // Room Class
 class Room {
-  constructor(name, description, items, inventory) {
-    (this.name = name), (this.description = description), (this.items = []);
-    // this.inventory = []
+  constructor(name, description, items) {
+    this.name = name,
+    this.description = description,
+    this.items = [];
+    
   }
 
-  addItem(item) {
-    // adding items to room inventory (dropping items from player inventory)
-
-    this.items.push(item);
+  // adding items to room inventory (removing items from player inventory)
+  leave(itemName) {
+    const item = itemLookup[itemName];
+    if (playerInventory.includes(item))
+    playerInventory.splice(item); // testing
+    this.items.push(item.name) // testing
     return `You dropped the ${item.name}`;
   }
+
 
   take(itemName) {
     const item = itemLookup[itemName];
     if (item && item.takeable) {
       // room specific info here??
-      playerInventory.push(item);
+      playerInventory.push(item.name);//
       return `You picked up ${item.name}: ${item.description}`;
-    } else {
+
+    } else if (item && !item.takeable){
       return `${item.description}`;
+
+    } else {
+        return `That's not an item in this room.`
     }
   }
 
@@ -143,7 +144,7 @@ let mousetrap = new Item(
 );
 let polaroid = new Item(
   "polaroid",
-  "A polaroid picture of an older couple holding hands in their garden.. on the back is a handwritten date '1997'...",
+  "A polaroid picture of an old couple holding hands in their garden.. on the back is a handwritten date: '1997'...",
   "cellar",
   true
 );
@@ -252,7 +253,7 @@ export const domDisplay = (playerInput) => {
     console.log(playerInventory);
     return response;
   }
-  console.log(playerInventory);
+//   console.log(playerInventory);
 
   //MOVING ROOMS STATE FUNCTION
   if (commandLookup.move.includes(command)) {
@@ -265,4 +266,24 @@ export const domDisplay = (playerInput) => {
       return `I can't go that way, I'll try somewhere else...`;
     }
   }
+
+  // FOR DROPPING / LEAVING AN ITEM
+  if (commandLookup.drop.includes(command)) {
+    let response = currentRoom.leave(item);
+    console.log(playerInventory);
+    console.log(currentRoom.items);
+    return response;
+  }
+
+  if (commandLookup.inventory.includes(command)) {
+    return `Here is what I have currently: ${playerInventory}`
+    
+  } else {
+    return `My bag is empty.`
+}
+ 
+
+
+
+
 }; // end of domDisplay function
