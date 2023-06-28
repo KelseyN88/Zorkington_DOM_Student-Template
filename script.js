@@ -72,21 +72,26 @@ class Item {
 
 // Room Class
 class Room {
-  constructor(name, description, items) {
+  constructor(name, description, stuff, items) {
     this.name = name,
     this.description = description,
+    this.stuff = stuff
     this.items = [];
     
   }
 
   // adding items to room inventory (removing items from player inventory)
-  leave(itemName) {
-    const item = itemLookup[itemName];
-    if (playerInventory.includes(item))
-    playerInventory.splice(item); // testing
-    this.items.push(item.name) // testing
-    return `You dropped the ${item.name}`;
+leave(itemName) {
+  const item = itemLookup[itemName];
+  const index = playerInventory.indexOf(item);
+  if (index !== -1) {
+    playerInventory.splice(index, 1);
   }
+  this.items.push(item.name);
+  return `You dropped the ${item.name}`;
+}
+
+  
 
 
   take(itemName) {
@@ -99,8 +104,11 @@ class Room {
     } else if (item && !item.takeable){
       return `${item.description}`;
 
-    } else {
+    } else if (!currentRoom.stuff) {
         return `That's not an item in this room.`
+
+    } else {
+        return `That item does not exist.`
     }
   }
 
@@ -113,6 +121,9 @@ class Room {
     }
   }
 } // end of Room class
+
+
+
 
 // Items
 let flashlight = new Item(
@@ -205,6 +216,7 @@ let itemLookup = {
 // Your code here
 let currentRoom = car;
 console.log(currentRoom);
+console.log(currentRoom.stuff);
 
 export const domDisplay = (playerInput) => {
   // this must "return" a string not all code needs to be in this function
@@ -261,6 +273,7 @@ export const domDisplay = (playerInput) => {
     const nextRoom = currentRoom.transition(newRoom);
     if (nextRoom) {
       currentRoom = roomLookup[nextRoom];
+      console.log(currentRoom.stuff);
       return `You are in the ${nextRoom}: ${currentRoom.description}`;
     } else {
       return `I can't go that way, I'll try somewhere else...`;
@@ -277,6 +290,7 @@ export const domDisplay = (playerInput) => {
 
   if (commandLookup.inventory.includes(command)) {
     return `Here is what I have currently: ${playerInventory}`
+   
     
   } else {
     return `My bag is empty.`
