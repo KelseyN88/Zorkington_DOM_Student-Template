@@ -15,20 +15,18 @@
 
 export const gameDetails = {
   title: "Abandoned Barn",
-  desc: "Welcome to the world of mystery... here are some quick rules & concepts... To Move: enter move and room name Commands: i or inventory to view inventory. Item Commands: enter inspect, pickup, look, followed by item name",
+  desc: `"Welcome to the world of mystery! Here are some quick rules & concepts... To Move: Enter "move" and room name. Commands: "i" or "inventory" to view inventory. Item Commands: enter "pickup", "drop", or "view", followed by the item name`,
   author: "Kelsey",
   cohort: "SBPT-May-2023",
-  startingRoomDescription: `Its dark and raining. Youre driving down the road when suddenly you smell something burning,
-    you pull off onto a dirt road when you see smoke start to barrel out of the hood of your car. You need to get away from there!
-    You notice an abandoned barn up ahead...maybe you can take cover there?`,
+  startingRoomDescription: `It's dark and raining. You're driving down the road when suddenly you smell something burning.
+    You pull off onto a dirt road when you see smoke start to barrel out of the hood of your car. You need to get away from here! Next to you is a small knife and a flashlight.
+    You notice an abandoned barn up ahead...maybe you can take cover there...`,
   playerCommands: [
     // replace these with your games commands as needed
-    "inspect",
-    "inventory",
-    "look",
+    "move",
     "pickup",
     "drop",
-    "move",
+    "inventory",
     "view",
   ],
   // Commands are basic things that a player can do throughout the game besides possibly moving to another room. This line will populate on the footer of your game for players to reference.
@@ -120,7 +118,8 @@ class Room {
 
     take(itemName) {
       const item = itemLookup[itemName];
-      if (item && item.takeable) {
+      
+      if (item && item.takeable) { //(item && item.takeable)
         // room specific info here??
         playerInventory.push(item.name);//
         return `You picked up ${item.name}: ${item.description}`;
@@ -150,22 +149,23 @@ class Room {
 // Rooms
 const car = new Room(
     "car",
-    "You are in the car, you can get out and go to the old barn",
+    `You are in the car, you can get out and move to the old barn`,
     [flashlight, knife]
   );
   const barn = new Room(
     "barn",
-    "Youre on the main floor of the old barn, the moonlight shines through the rickety panels to illuminate the room just enough to see stairs to a loft or a dark opening that leads to the cellar.",
+    `"Youre on the main floor of the old barn, the moonlight shines through the rickety panels to illuminate the room just enough
+    to see stairs to a loft or a dark opening that leads to the cellar.`,
     [crowbar, rope]
   );
   const cellar = new Room(
     "cellar",
-    "You slowly creep down to the cellar... its pretty scary down here!",
+    `You slowly creep down to the cellar... It's pretty scary down here! You might want to get back to the main floor of the barn.`,
     [mousetrap, polaroid]
   );
   const loft = new Room(
     "loft",
-    "You climb the creeky ladder to the loft, its dusty up here!",
+    `You climb the creeky ladder to the loft, It's dusty up here! You can move back down to the barn`,
     [hay, matches]
   );
   
@@ -201,6 +201,7 @@ let commandLookup = {
   drop: ["drop", "delete", "remove"],
   move: ["move", "go to"],
   view: ["view"],
+  inspect: ["inspect"]
 };
 
 //=====================================================================
@@ -284,6 +285,11 @@ export const domDisplay = (playerInput) => {
     }
   }
 
+
+  if (commandLookup.view.includes(command)) {
+    return currentRoom.description
+  }
+
   // FOR DROPPING / LEAVING AN ITEM
   if (commandLookup.drop.includes(command)) {
      
@@ -302,7 +308,6 @@ export const domDisplay = (playerInput) => {
     return `My bag is empty.`;
 }
  
-
 
 
 
