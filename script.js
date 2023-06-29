@@ -28,6 +28,7 @@ export const gameDetails = {
     "drop",
     "inventory",
     "view",
+    "inspect"
   ],
   // Commands are basic things that a player can do throughout the game besides possibly moving to another room. This line will populate on the footer of your game for players to reference.
   // This shouldn't be more than 6-8 different commands.
@@ -143,6 +144,8 @@ class Room {
         return null;
       }
     }
+
+
   } // end of Room class
 
 
@@ -154,7 +157,7 @@ const car = new Room(
   );
   const barn = new Room(
     "barn",
-    `"Youre on the main floor of the old barn, the moonlight shines through the rickety panels to illuminate the room just enough
+    `You're on the main floor of the old barn, the moonlight shines through the rickety panels to illuminate the room just enough
     to see stairs to a loft or a dark opening that leads to the cellar.`,
     [crowbar, rope]
   );
@@ -206,7 +209,7 @@ let commandLookup = {
 
 //=====================================================================
 
-    // adding items to room inventory (removing items from player inventory)
+    // DROPPING ITEMS - Adding items to room inventory (removing items from player inventory)
     function leave(itemName) {
         const item = itemLookup[itemName];
 //                               comparing the name to itemName to make sure it matches at the index
@@ -220,7 +223,7 @@ let commandLookup = {
         }
       }
       
-      
+     
       
 
 export const domDisplay = (playerInput) => {
@@ -269,7 +272,7 @@ export const domDisplay = (playerInput) => {
     let response = currentRoom.take(item);
     console.log(playerInventory);
     return response;
-  }
+  };
 //   console.log(playerInventory);
 
   //MOVING ROOMS STATE FUNCTION
@@ -282,12 +285,24 @@ export const domDisplay = (playerInput) => {
       return `You are in the ${nextRoom}: ${currentRoom.description}`;
     } else {
       return `I can't go that way, I'll try somewhere else...`;
-    }
-  }
+    };
+  };
 
 
   if (commandLookup.view.includes(command)) {
     return currentRoom.description
+  };
+
+  // INSPECTING THE ROOM FOR ITEMS
+  if (commandLookup.inspect.includes(command)) {
+    if (currentRoom.stuff.length === 0) {
+      return `There are no items to inspect in this room.`;
+    } else {
+      let itemsToInspect = currentRoom.stuff.map((item) => {
+        return `${item.name} ,`;//${item.description}
+      });
+      return `Items in this room: ${itemsToInspect.join("\n")},  ${currentRoom.items}`;
+    }
   }
 
   // FOR DROPPING / LEAVING AN ITEM
@@ -299,15 +314,15 @@ export const domDisplay = (playerInput) => {
 
   } else {
     null
-  }
+  };
 
   if (commandLookup.inventory.includes(command)) {
     return `Here is what I have currently: ${playerInventory}`;
    
   } else {
     return `My bag is empty.`;
-}
- 
+};
+
 
 
 
