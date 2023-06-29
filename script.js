@@ -37,7 +37,153 @@ export const gameDetails = {
 
 //==========================================================================================================================================================================
 
+// Item Class
+class Item {
+    constructor(name, description, location, takeable) {
+      (this.name = name),
+        (this.description = description),
+        (this.location = location);
+      this.takeable = takeable;
+    }
+  
+  } // end of Item class
+  
+  // Items
+  let flashlight = new Item(
+    "flashlight",
+    "Its out of batteries, wont do me any good...",
+    "car"
+  );
+  let knife = new Item(
+    "knife",
+    "A small pocket knife with a sharp edge...",
+    "car",
+    true
+  );
+  let rope = new Item(
+    "rope",
+    "This rope appears to be too frayed to be useful...",
+    "barn"
+  );
+  let crowbar = new Item(
+    "crowbar",
+    "A sturdy crowbar could be used to pry something...",
+    "barn",
+    true
+  );
+  let mousetrap = new Item(
+    "mousetrap",
+    "This trap hasnt been set off yet, better not touch it...",
+    "cellar"
+  );
+  let polaroid = new Item(
+    "polaroid",
+    "A polaroid picture of an old couple holding hands in their garden.. on the back is a handwritten date: '1997'...",
+    "cellar",
+    true
+  );
+  let hay = new Item(
+    "hay",
+    "Hay is for horses, what would I do with that...",
+    "loft"
+  );
+  let matches = new Item(
+    "matches",
+    "A pack of matches, theres still some left!",
+    "loft",
+    true
+  );
+  
+  
+  
+  // Item lookup Table
+  let itemLookup = {
+    flashlight: flashlight, // cant use
+    crowbar: crowbar,
+    hay: hay, // cant use
+    rope: rope, // cant use
+    knife: knife,
+    mousetrap: mousetrap, //cant use
+    polaroid: polaroid,
+    matches: matches,
+  };
+
+// Room Class
+class Room {
+    constructor(name, description, stuff, items) {
+      this.name = name,
+      this.description = description,
+      this.stuff = stuff
+      this.items = [];
+      
+    }
+
+    take(itemName) {
+      const item = itemLookup[itemName];
+      if (item && item.takeable) {
+        // room specific info here??
+        playerInventory.push(item.name);//
+        return `You picked up ${item.name}: ${item.description}`;
+  
+      } else if (item && !item.takeable){
+        return `${item.description}`;
+  
+      } else if (!currentRoom.stuff) {
+          return `That's not an item in this room.`;
+  
+      } else {
+          return `That item does not exist.`;
+      }
+    }
+  
+    transition(newRoom) {
+      const validTransitions = pathways[this.name];
+      if (validTransitions.includes(newRoom)) {
+        return newRoom;
+      } else {
+        return null;
+      }
+    }
+  } // end of Room class
+
+
+// Rooms
+const car = new Room(
+    "car",
+    "You are in the car, you can get out and go to the old barn",
+    [flashlight, knife]
+  );
+  const barn = new Room(
+    "barn",
+    "Youre on the main floor of the old barn, the moonlight shines through the rickety panels to illuminate the room just enough to see stairs to a loft or a dark opening that leads to the cellar.",
+    [crowbar, rope]
+  );
+  const cellar = new Room(
+    "cellar",
+    "You slowly creep down to the cellar... its pretty scary down here!",
+    [mousetrap, polaroid]
+  );
+  const loft = new Room(
+    "loft",
+    "You climb the creeky ladder to the loft, its dusty up here!",
+    [hay, matches]
+  );
+  
+  // Room Lookup Table
+  let roomLookup = {
+    car: car,
+    barn: barn,
+    cellar: cellar,
+    loft: loft,
+  };
+
+
+let currentRoom = car;
+console.log(currentRoom);
+console.log(currentRoom.stuff);
+
 let playerInventory = [];
+
 
 // State Machine
 const pathways = {
@@ -58,165 +204,23 @@ let commandLookup = {
 };
 
 //=====================================================================
-// Item Class
-class Item {
-  constructor(name, description, location, takeable) {
-    (this.name = name),
-      (this.description = description),
-      (this.location = location);
-    this.takeable = takeable;
-  }
 
-} // end of Item class
-
-
-// Room Class
-class Room {
-  constructor(name, description, stuff, items) {
-    this.name = name,
-    this.description = description,
-    this.stuff = stuff
-    this.items = [];
-    
-  }
-
-  // adding items to room inventory (removing items from player inventory)
-leave(itemName) {
-  const item = itemLookup[itemName];
-  const index = playerInventory.indexOf(item);
-  if (index !== -1) {
-    playerInventory.splice(index, 1);
-  }
-  this.items.push(item.name);
-  return `You dropped the ${item.name}`;
-}
-
-  
-
-
-  take(itemName) {
-    const item = itemLookup[itemName];
-    if (item && item.takeable) {
-      // room specific info here??
-      playerInventory.push(item.name);//
-      return `You picked up ${item.name}: ${item.description}`;
-
-    } else if (item && !item.takeable){
-      return `${item.description}`;
-
-    } else if (!currentRoom.stuff) {
-        return `That's not an item in this room.`
-
-    } else {
-        return `That item does not exist.`
-    }
-  }
-
-  transition(newRoom) {
-    const validTransitions = pathways[this.name];
-    if (validTransitions.includes(newRoom)) {
-      return newRoom;
-    } else {
-      return null;
-    }
-  }
-} // end of Room class
-
-
-
-
-// Items
-let flashlight = new Item(
-  "flashlight",
-  "Its out of batteries, wont do me any good...",
-  "car"
-);
-let knife = new Item(
-  "knife",
-  "A small pocket knife with a sharp edge...",
-  "car",
-  true
-);
-let rope = new Item(
-  "rope",
-  "This rope appears to be too frayed to be useful...",
-  "barn"
-);
-let crowbar = new Item(
-  "crowbar",
-  "A sturdy crowbar could be used to pry something...",
-  "barn",
-  true
-);
-let mousetrap = new Item(
-  "mousetrap",
-  "This trap hasnt been set off yet, better not touch it...",
-  "cellar"
-);
-let polaroid = new Item(
-  "polaroid",
-  "A polaroid picture of an old couple holding hands in their garden.. on the back is a handwritten date: '1997'...",
-  "cellar",
-  true
-);
-let hay = new Item(
-  "hay",
-  "Hay is for horses, what would I do with that...",
-  "loft"
-);
-let matches = new Item(
-  "matches",
-  "A pack of matches, theres still some left!",
-  "loft",
-  true
-);
-
-// Rooms
-const car = new Room(
-  "car",
-  "You are in the car, you can get out and go to the old barn",
-  [flashlight, knife]
-);
-const barn = new Room(
-  "barn",
-  "Youre on the main floor of the old barn, the moonlight shines through the rickety panels to illuminate the room just enough to see stairs to a loft or a dark opening that leads to the cellar.",
-  [crowbar, rope]
-);
-const cellar = new Room(
-  "cellar",
-  "You slowly creep down to the cellar... its pretty scary down here!",
-  [mousetrap, polaroid]
-);
-const loft = new Room(
-  "loft",
-  "You climb the creeky ladder to the loft, its dusty up here!",
-  [hay, matches]
-);
-
-// Room Lookup Table
-let roomLookup = {
-  car: car,
-  barn: barn,
-  cellar: cellar,
-  loft: loft,
-};
-
-// Item lookup Table
-let itemLookup = {
-  flashlight: flashlight, // cant use
-  crowbar: crowbar,
-  hay: hay, // cant use
-  rope: rope, // cant use
-  knife: knife,
-  mousetrap: mousetrap, //cant use
-  polaroid: polaroid,
-  matches: matches,
-};
-
-// Your code here
-let currentRoom = car;
-console.log(currentRoom);
-console.log(currentRoom.stuff);
+    // adding items to room inventory (removing items from player inventory)
+    function leave(itemName) {
+        const item = itemLookup[itemName];
+//                               comparing the name to itemName to make sure it matches at the index
+        const index = playerInventory.findIndex((inventoryItem) => inventoryItem.name === itemName);
+        if (index !== -1) {
+          let removedItem = playerInventory.splice(index, 1);
+          currentRoom.items.push(removedItem[0]);
+          return `You dropped the ${removedItem}`;
+        } else {
+          return `${removedItem} is not in your inventory.`;
+        }
+      }
+      
+      
+      
 
 export const domDisplay = (playerInput) => {
   // this must "return" a string not all code needs to be in this function
@@ -282,18 +286,20 @@ export const domDisplay = (playerInput) => {
 
   // FOR DROPPING / LEAVING AN ITEM
   if (commandLookup.drop.includes(command)) {
-    let response = currentRoom.leave(item);
+     
     console.log(playerInventory);
     console.log(currentRoom.items);
-    return response;
+    return leave();
+
+  } else {
+    null
   }
 
   if (commandLookup.inventory.includes(command)) {
-    return `Here is what I have currently: ${playerInventory}`
+    return `Here is what I have currently: ${playerInventory}`;
    
-    
   } else {
-    return `My bag is empty.`
+    return `My bag is empty.`;
 }
  
 
