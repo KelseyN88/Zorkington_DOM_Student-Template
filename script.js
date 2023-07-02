@@ -1,4 +1,3 @@
-//CHECK TO MAKE SURE THIS PUSHED UP. LAST COMMIT 6/29 @ 1038PM "DEBUGGED COMMAND & CURRENTROOM ITEM ERRORS"
 
 /* 
     TODO for students
@@ -52,7 +51,8 @@ class Item {
 let flashlight = new Item(
   "flashlight",
   "Its out of batteries, wont do me any good...",
-  "car"
+  "car",
+  false
 );
 let knife = new Item(
   "knife",
@@ -63,7 +63,8 @@ let knife = new Item(
 let rope = new Item(
   "rope",
   "This rope appears to be too frayed to be useful...",
-  "barn"
+  "barn",
+  false
 );
 let crowbar = new Item(
   "crowbar",
@@ -74,7 +75,8 @@ let crowbar = new Item(
 let mousetrap = new Item(
   "mousetrap",
   "This trap hasnt been set off yet, better not touch it...",
-  "cellar"
+  "cellar",
+  false
 );
 let polaroid = new Item(
   "polaroid",
@@ -85,13 +87,33 @@ let polaroid = new Item(
 let hay = new Item(
   "hay",
   "Hay is for horses, what would I do with that...",
-  "loft"
+  "loft",
+  false
 );
 let matches = new Item(
   "matches",
   "A pack of matches, theres still some left!",
   "loft",
   true
+);
+
+let key = new Item(
+  "key",
+  "A small key with intricate details...",
+  "loft",
+  true
+);
+let wand = new Item(
+  "wand",
+  "A magic wand...it's glowing!",
+  "den",
+  true
+);
+let stone = new Item(
+  "stone",
+  "It's too heavy to carry....",
+  "den",
+  false
 );
 
 // Item lookup Table
@@ -104,13 +126,19 @@ let itemLookup = {
   mousetrap: mousetrap, //cant use
   polaroid: polaroid,
   matches: matches,
+  key: key,
+  wand: wand,
+  stone: stone
 };
 
 // Room Class
 class Room {
-  constructor(name, description, items) {
-    (this.name = name), (this.description = description), (this.items = items);
-  }
+  constructor(name, description, items, locked) {
+    this.name = name,
+    this.description = description,
+    this.items = items,
+    this.locked = locked
+  };
 
   take(itemName) {
     const item = itemLookup[itemName];
@@ -145,24 +173,34 @@ class Room {
 // Rooms
 const car = new Room(
   "car",
-  `You are in the car, you can get out and move to the old barn`,
-  [flashlight, knife]
+  `You are in the car, you can get out and move to the old "barn"`,
+  [flashlight, knife],
+  false
 );
 const barn = new Room(
   "barn",
   `You're on the main floor of the old barn, the moonlight shines through the rickety panels to illuminate the room just enough
-    to see stairs to a loft or a dark opening that leads to the cellar.`,
-  [crowbar, rope]
+    to see stairs to a "loft" or a dark opening that leads to the "cellar".`,
+  [crowbar, rope],
+  false
 );
 const cellar = new Room(
   "cellar",
-  `You slowly creep down to the cellar... It's pretty scary down here! You might want to get back to the main floor of the barn.`,
-  [mousetrap, polaroid]
+  `You slowly creep down to the cellar... It's pretty scary down here! You faintly make out a small doorway to a "den" up ahead or you can move back to safety in the "barn".`,
+  [mousetrap, polaroid],
+  false
 );
 const loft = new Room(
   "loft",
-  `You climb the creeky ladder to the loft, It's dusty up here! You can move back down to the barn`,
-  [hay, matches]
+  `You climb the creeky ladder to the loft, It's dusty up here! You can move back down to the "barn".`,
+  [hay, matches],
+  false
+);
+const den = new Room(
+  "den",
+  `You enter through the small opening to the den. It's damp and quiet...too quiet...you can turn back to the "cellar".`,
+  [wand, stone],
+  true
 );
 
 // Room Lookup Table
@@ -171,6 +209,7 @@ let roomLookup = {
   barn: barn,
   cellar: cellar,
   loft: loft,
+  den: den
 };
 
 // Some global variables:
@@ -182,7 +221,8 @@ const pathways = {
   car: ["barn"],
   barn: ["cellar", "loft"],
   loft: ["barn"],
-  cellar: ["barn"],
+  cellar: ["barn", "den"],
+  den: ["cellar"]
 };
 
 // Command Lookup Table
@@ -191,12 +231,11 @@ let commandLookup = {
   use: ["use"],
   pickup: ["pickup", "grab"],
   drop: ["drop", "delete", "remove"],
-  move: ["move", "go to", "move to"],
+  move: ["move",],
   view: ["view"],
   inspect: ["inspect"],
 };
 
-//=====================================================================
 
 // DROPPING ITEMS - Adding items to room inventory (removing items from player inventory)
 function leave(itemName) {
@@ -211,6 +250,7 @@ function leave(itemName) {
     return `${itemName} is not in your inventory.`;
   }
 };
+
 
 export const domDisplay = (playerInput) => {
   // this must "return" a string not all code needs to be in this function
@@ -284,7 +324,7 @@ export const domDisplay = (playerInput) => {
       return `There are no items to inspect in this room.`;
     } else {
       let itemsToInspect = currentRoom.items.map((item, i) => {
-        return `${item.name}.`;
+        return `${item.name}: ${item.description}`;
       });
       return `Items in this room: ${itemsToInspect.join("\n")}`;
     }
