@@ -1,3 +1,5 @@
+//CHECK TO MAKE SURE THIS PUSHED UP. LAST COMMIT 6/29 @ 1038PM "DEBUGGED COMMAND & CURRENTROOM ITEM ERRORS"
+
 /* 
     TODO for students
         General Setup:
@@ -119,7 +121,7 @@ class Room {
       if (index !== -1) {
         const removedItem = currentRoom.items.splice(index, 1)[0];
         playerInventory.push(removedItem);
-        return `You picked up ${removedItem.name}`;
+        return `You picked up ${removedItem.name}: ${removedItem.description}`;
       } else {
         return `That item does not exist in this room.`;
       }
@@ -189,7 +191,7 @@ let commandLookup = {
   use: ["use"],
   pickup: ["pickup", "grab"],
   drop: ["drop", "delete", "remove"],
-  move: ["move", "go to"],
+  move: ["move", "go to", "move to"],
   view: ["view"],
   inspect: ["inspect"],
 };
